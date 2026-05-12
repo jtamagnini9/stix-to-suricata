@@ -25,9 +25,9 @@ class SuricataRule:
         """Convert to Suricata rule string"""
         opts = "; ".join(self.options)
         if opts:
-            opts = f"({opts}; sid:{sid};)"
+            opts = f"({opts}; sid:{sid}; rev:1;)"
         else:
-            opts = f"(sid:{sid};)"
+            opts = f"(sid:{sid}; rev:1;)"
 
         return f"{self.action} {self.protocol} {self.src_ip} {self.src_port} {self.direction} {self.dst_ip} {self.dst_port} {opts}"
 
