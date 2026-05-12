@@ -1,0 +1,26 @@
+{
+  "type": "bundle",
+  "id": "bundle--example-001",
+  "objects": [
+    {
+      "type": "indicator",
+      "id": "indicator--c1c3e8c2-7d72-4f8e-a7e4-25f9f6e7a7a7",
+      "pattern": "[ipv4-addr:value = '203.0.113.42']",
+      "labels": ["malicious-activity"],
+      "name": "C2 Server IP",
+      "description": "Known command and control server",
+      "created": "2025-10-01T10:00:00.000Z",
+      "modified": "2025-10-01T10:00:00.000Z"
+    },
+    {
+      "type": "indicator",
+      "id": "indicator--d2e4f9d3-8e83-5g9f-b8f5-36g0g7f8b8b8",
+      "pattern": "[domain-name:value = 'evil.example.com']",
+      "labels": ["phishing"],
+      "name": "Phishing Domain",
+      "description": "Active phishing campaign",
+      "created": "2025-10-02T14:30:00.000Z",
+      "modified": "2025-10-02T14:30:00.000Z"
+    }
+  ]
+}

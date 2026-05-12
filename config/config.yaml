@@ -1,0 +1,23 @@
+# STIX2Suricata Configuration
+
+suricata:
+  sid_start: 5000000
+  default_priority: 2
+  default_classtype: "trojan-activity"
+  default_action: "alert"
+
+handlers:
+  enabled:
+    - network
+    - domain
+    - url
+    - ipv4
+    - ipv6
+
+logging:
+  level: INFO
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+output:
+  include_metadata: true
+  include_comments: true
