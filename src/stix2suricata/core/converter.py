@@ -3,6 +3,7 @@
 import logging
 from typing import List, Dict, Optional
 from stix2suricata.core.parser import StixPatternParser
+from stix2suricata.core.oca_parser import OCABundleParser
 from stix2suricata.handlers.base import BaseHandler
 from stix2suricata.utils.config import Config
 from stix2suricata.handlers.network import NetworkHandler
@@ -78,10 +79,19 @@ class StixConverter:
         return rules
 
     def convert_bundle(self, bundle: Dict) -> List[str]:
-        """Convert STIX bundle to Suricata rules"""
-        indicators = self.parser.parse_bundle(bundle)
-        rules = []
+        """Convert STIX bundle to Suricata rules.
 
+        Auto-detects OCA bundles (containing x-oca-detection objects)
+        and routes them to OCABundleParser; standard STIX bundles use
+        the regular StixPatternParser.
+        """
+        objects = bundle.get('objects', [])
+        if any(o.get('type') == 'x-oca-detection' for o in objects):
+            indicators = OCABundleParser().parse_bundle(bundle)
+        else:
+            indicators = self.parser.parse_bundle(bundle)
+
+        rules = []
         for indicator in indicators:
             rule_strings = self.convert_indicator(indicator)
             rules.extend(rule_strings)
