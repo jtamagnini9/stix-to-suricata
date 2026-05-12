@@ -22,6 +22,9 @@ class StixPatternParser:
         'file_hash_sha256': r"file:hashes\.'SHA-256'\s*=\s*'([^']+)'",
         'email_from': r"email-message:from_ref\.value\s*=\s*'([^']+)'",
         'email_subject': r"email-message:subject\s*=\s*'([^']+)'",
+        'url_matches': r"url:value\s+MATCHES\s+'([^']+)'",
+        'domain_matches': r"domain-name:value\s+MATCHES\s+'([^']+)'",
+        'process_command_line': r"process:command_line\s+MATCHES\s+'([^']+)'",
     }
 
     def parse(self, pattern: str) -> List[Dict]:
