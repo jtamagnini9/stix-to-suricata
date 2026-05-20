@@ -34,3 +34,4 @@ env/
 # Output
 *.rules
 output*.rules
+docs/superpowers/
