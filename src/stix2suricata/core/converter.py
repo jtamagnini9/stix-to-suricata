@@ -9,6 +9,7 @@ from stix2suricata.utils.config import Config
 from stix2suricata.handlers.network import NetworkHandler
 from stix2suricata.handlers.domain import DomainHandler
 from stix2suricata.handlers.url import URLHandler
+from stix2suricata.handlers.http_body import HttpBodyHandler
 
 
 class StixConverter:
@@ -35,6 +36,7 @@ class StixConverter:
         self.register_handler(NetworkHandler(self.config))
         self.register_handler(DomainHandler(self.config))
         self.register_handler(URLHandler(self.config))
+        self.register_handler(HttpBodyHandler(self.config))
 
     def get_next_sid(self) -> int:
         """Get next available SID"""

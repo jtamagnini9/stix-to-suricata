@@ -25,6 +25,7 @@ class StixPatternParser:
         'url_matches': r"url:value\s+MATCHES\s+'([^']+)'",
         'domain_matches': r"domain-name:value\s+MATCHES\s+'([^']+)'",
         'process_command_line': r"process:command_line\s+MATCHES\s+'([^']+)'",
+        'artifact_payload_matches': r"artifact:payload_bin\s+MATCHES\s+'([^']+)'",
     }
 
     def parse(self, pattern: str) -> List[Dict]:
@@ -43,6 +44,22 @@ class StixPatternParser:
                     'value': match,
                     'pattern': pattern
                 })
+
+        # Consolidate all artifact_payload_matches into one http_body_multi
+        # only when the pattern also references HTTP traffic
+        payload = [i for i in indicators if i['type'] == 'artifact_payload_matches']
+        has_http_context = bool(re.search(r"network-traffic:protocols\[0\]\s*=\s*'http'", pattern, re.IGNORECASE))
+        if payload and has_http_context:
+            indicators = [i for i in indicators if i['type'] != 'artifact_payload_matches']
+            indicators.append({
+                'type': 'http_body_multi',
+                'values': [i['value'] for i in payload],
+                'pattern': pattern
+            })
+        elif payload and not has_http_context:
+            # Leave artifact_payload_matches as-is; no handler exists for them
+            # (they will generate a "no handler" warning in the converter, which is correct)
+            pass
 
         return indicators
 
