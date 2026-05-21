@@ -32,12 +32,13 @@ def test_send_returns_true_on_201():
 
 
 def test_send_posts_correct_payload():
+    import base64
     sender = make_sender()
     with patch('requests.post', return_value=mock_resp(200)) as mock_post:
         sender.send(RULE, SOURCE)
     mock_post.assert_called_once_with(
         ENDPOINT,
-        json={'rule': RULE, 'source_file': SOURCE},
+        json={'rule': base64.b64encode(RULE.encode()).decode(), 'source_file': SOURCE},
         timeout=10,
     )
 

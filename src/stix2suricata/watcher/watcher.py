@@ -92,7 +92,7 @@ class DirectoryWatcher:
 
         all_sent = True
         for rule in rules:
-            rule_hash = self._rule_hash(rule)
+            rule_hash = self._rule_hash(rule, filename)
             if self.state.is_sent(rule_hash):
                 logger.debug("Rule already sent, skipping")
                 continue
@@ -106,7 +106,12 @@ class DirectoryWatcher:
             logger.info("Processed %s: %d rule(s) forwarded", filename, len(rules))
 
     @staticmethod
-    def _rule_hash(rule: str) -> str:
-        """SHA256 of rule content with sid:N; stripped — stable across SID counter resets."""
+    def _rule_hash(rule: str, source_file: str) -> str:
+        """SHA256 of (source_file + rule content with sid:N; stripped).
+
+        Including source_file ensures the same rule content from two different
+        bundles is sent independently, while still deduplicating on retry within
+        the same file.
+        """
         normalized = re.sub(r'sid:\d+;', '', rule)
-        return hashlib.sha256(normalized.encode()).hexdigest()
+        return hashlib.sha256(f"{source_file}:{normalized}".encode()).hexdigest()

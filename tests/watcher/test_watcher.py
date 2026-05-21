@@ -47,20 +47,27 @@ def make_watcher(tmp_path, endpoint='http://localhost/suricataRule'):
 # --- _rule_hash ---
 
 def test_rule_hash_strips_sid():
-    h1 = DirectoryWatcher._rule_hash('alert http any any (sid:100; rev:1;)')
-    h2 = DirectoryWatcher._rule_hash('alert http any any (sid:999; rev:1;)')
+    h1 = DirectoryWatcher._rule_hash('alert http any any (sid:100; rev:1;)', 'peer-001.json')
+    h2 = DirectoryWatcher._rule_hash('alert http any any (sid:999; rev:1;)', 'peer-001.json')
     assert h1 == h2
 
 
 def test_rule_hash_differs_for_different_content():
-    h1 = DirectoryWatcher._rule_hash('alert http any any (msg:"A"; sid:1; rev:1;)')
-    h2 = DirectoryWatcher._rule_hash('alert http any any (msg:"B"; sid:1; rev:1;)')
+    h1 = DirectoryWatcher._rule_hash('alert http any any (msg:"A"; sid:1; rev:1;)', 'peer-001.json')
+    h2 = DirectoryWatcher._rule_hash('alert http any any (msg:"B"; sid:1; rev:1;)', 'peer-001.json')
     assert h1 != h2
 
 
 def test_rule_hash_is_deterministic():
     rule = 'alert http any any (msg:"test"; sid:42; rev:1;)'
-    assert DirectoryWatcher._rule_hash(rule) == DirectoryWatcher._rule_hash(rule)
+    assert DirectoryWatcher._rule_hash(rule, 'peer-001.json') == DirectoryWatcher._rule_hash(rule, 'peer-001.json')
+
+
+def test_rule_hash_differs_for_different_source_file():
+    rule = 'alert http any any (msg:"test"; sid:42; rev:1;)'
+    h1 = DirectoryWatcher._rule_hash(rule, 'peer-001.json')
+    h2 = DirectoryWatcher._rule_hash(rule, 'peer-002.json')
+    assert h1 != h2
 
 
 # --- run() ---

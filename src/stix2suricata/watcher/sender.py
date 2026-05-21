@@ -1,5 +1,6 @@
 """HTTP rule sender with exponential-backoff retry."""
 
+import base64
 import logging
 import time
 
@@ -22,7 +23,7 @@ class RuleSender:
 
     def send(self, rule: str, source_file: str) -> bool:
         """Send a rule to the endpoint. Returns True on success, False otherwise."""
-        payload = {'rule': rule, 'source_file': source_file}
+        payload = {'rule': base64.b64encode(rule.encode()).decode(), 'source_file': source_file}
 
         for attempt in range(self.max_retries):
             try:
