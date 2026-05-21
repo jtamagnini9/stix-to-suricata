@@ -45,21 +45,17 @@ class StixPatternParser:
                     'pattern': pattern
                 })
 
-        # Consolidate all artifact_payload_matches into one http_body_multi
-        # only when the pattern also references HTTP traffic
+        # Consolidate all artifact:payload_bin MATCHES into one http_body_multi indicator.
+        # artifact:payload_bin in IoB bundles always refers to HTTP body content, so we
+        # consolidate regardless of whether an explicit HTTP context is present in the pattern.
         payload = [i for i in indicators if i['type'] == 'artifact_payload_matches']
-        has_http_context = bool(re.search(r"network-traffic:protocols\[0\]\s*=\s*'http'", pattern, re.IGNORECASE))
-        if payload and has_http_context:
+        if payload:
             indicators = [i for i in indicators if i['type'] != 'artifact_payload_matches']
             indicators.append({
                 'type': 'http_body_multi',
                 'values': [i['value'] for i in payload],
                 'pattern': pattern
             })
-        elif payload and not has_http_context:
-            # Leave artifact_payload_matches as-is; no handler exists for them
-            # (they will generate a "no handler" warning in the converter, which is correct)
-            pass
 
         return indicators
 
